@@ -1,0 +1,27 @@
+services:
+
+  server: 
+    restart: always
+    image: python:3.10.13-slim-bullseye
+    command: python3 /app/server.py
+    volumes:
+      - ".:/app:ro"
+      - ${PATH_TO_CERT}:/app:ro
+      - ${PATH_TO_CERT_KEY}:/app:ro
+    environment:
+      - CERT
+      - CERT_KEY
+    ports:
+     - "8443:8443"
+
+  client:
+    depends_on: [server]
+    image: python:3.10.13-slim-bullseye
+    command: python3 /app/client.py
+    volumes:
+      - ".:/app:ro"
+      - ${PATH_TO_CERT}:/app:ro
+    environment:
+    - CERT
+    - HOST
+    - HOSTNAME

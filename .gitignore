@@ -1,3 +1,2 @@
 # certificate and key files
-cert.pem
-key.pem
+*.pem

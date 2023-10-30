@@ -1,20 +1,27 @@
+from pathlib import Path
 from socket import socket, AF_INET, SOCK_STREAM
 from ssl import SSLContext, PROTOCOL_TLS_SERVER
+from os import environ
 
+host = environ.get("HOST", "0.0.0.0")
+port = int(environ.get("PORT", "8443"))
 
-ip = '127.0.0.1'
-port = 8443
+path_to_cert = Path(__file__).parent.joinpath(environ["CERT"])
+path_to_key = Path(__file__).parent.joinpath(environ["CERT_KEY"])
+
+assert path_to_cert.is_file() and path_to_key.is_file()
+
 context = SSLContext(PROTOCOL_TLS_SERVER)
-context.load_cert_chain('cert.pem', 'key.pem')
+context.load_cert_chain(path_to_cert, path_to_key)
 
 with socket(AF_INET, SOCK_STREAM) as server:
-    server.bind((ip, port))
+    server.bind((host, port))
     server.listen(1)
     with context.wrap_socket(server, server_side=True) as tls:
         connection, address = tls.accept()
-        print(f'Connected by {address}\n')
+        print(f"Connected by {address}\n")
 
         data = connection.recv(1024)
-        print(f'Client Says: {data}')
+        print(f"Client Says: {data}")
 
         connection.sendall(b"You're welcome")
