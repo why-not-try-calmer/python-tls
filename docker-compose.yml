@@ -1,0 +1,23 @@
+services:
+  server: 
+    restart: always
+    image: python:3.10.13-slim-bullseye
+    command: python3 /app/server.py
+    volumes:
+      - ${PWD}:/app:ro
+    environment:
+      CERT: cert.pem
+      CERT_KEY: key.pem
+    ports:
+     - "8443:8443"
+
+  client:
+    depends_on: [server]
+    image: python:3.10.13-slim-bullseye
+    command: python3 /app/client.py
+    volumes:
+      - ${PWD}:/app:ro
+    environment:
+      CERT: cert.pem
+      HOST: server
+      HOSTNAME: example.org

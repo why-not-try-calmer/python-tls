@@ -1,0 +1,6 @@
+{
+    "python.analysis.typeCheckingMode": "basic",
+    "black-formatter.path": [
+        "/etc/profiles/per-user/ad/bin/black"
+    ]
+}
